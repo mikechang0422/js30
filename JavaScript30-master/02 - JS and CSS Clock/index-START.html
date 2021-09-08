@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+    .clock-face::after{
+      content:'';
+      display: block;
+      width: 25px;
+      height: 25px;
+      border-radius: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      background-color: #EFEFEF;
+    }
+
+    .hand {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
+    .second-hand::after{
+      width: 5px;
+      height: 50%;
+      background-color: #aaf;
+      display: block;
+      content: '';
+      bottom: 50%;
+      left: 50%;
+      position: absolute;
+      transform: translate(-50%,0);
+    }
+    .min-hand::after{
+      width: 10px;
+      height: 35%;
+      background-color: #EFEFEF;
+      display: block;
+      content: '';
+      bottom: 50%;
+      left: 50%;
+      position: absolute;
+      transform: translate(-50%,0);
+    }
+
+    .hour-hand::after{
+      width: 15px;
+      height: 20%;
+      background-color: #EFEFEF;
+      display: block;
+      content: '';
+      bottom: 50%;
+      left: 50%;
+      position: absolute;
+      transform: translate(-50%,0);
+    }
+  </style>
+
+  <script>
+
+//IIFE
+;(function(){
+  const second = document.querySelector('.second-hand')
+  const min = document.querySelector('.min-hand')
+  const hour = document.querySelector('.hour-hand')
+
+  function setClock(){
+    let data = new Date()
+
+    let secondDeg = data.getSeconds() * 6 //(360/60)
+    let minDeg = data.getMinutes() * 6 + data.getSeconds() * 6 / 60  //(360/60)
+    let hourDeg = data.getHours () * 30 + data.getMinutes() * 30 / 60  //(360/12)
+
+    second.style.transform = `rotate(${secondDeg}deg)`
+    min.style.transform = `rotate(${minDeg}deg)`
+    hour.style.transform = `rotate(${hourDeg}deg)`
+
+  }
+  //function timeoutHandler(){
+  //  setClock()  //執行一次setClock()
+  //  setTimeout(timeoutHandler,1000)  //告訴他下一次執行要延遲一秒 所以就會變成作一次告訴下一次 
+  //}
+
+  function animationHandler(){
+    setClock()
+    window.requestAnimationFrame(animationHandler)  //告訴他下一次畫面更新時要再做一次
+    }
+
+  setClock()  //初始化畫面
+
+  //計時器 setInterval or setTimeout or requestAnimationFrame 三種皆可
+  
+  //setInterval(setClock,1000)  //設定間隔 持續執行
+  //setTimeout(timeoutHandler,1000)  //設定延遲 執行一次 這邊的功用比較像是啟動第一次接著function裡面就會告訴他下一次  如果把timeoutHandler改成setClock 結果就只會執行一次
+  //以上兩種都可以設定時間但螢幕目前大概都是60hz 代表螢幕一秒更新60次是上限
+  window.requestAnimationFrame(animationHandler) //處理化面更新的setTimeout
+  //配合硬體的更新去抓取當時的畫面變化 跟上面剛好相反 上面是軟體控制硬體 這裡是軟體配合硬體
+  //一樣是啟動的概念因此一樣要在function裡面在呼叫下一次
+  //canvas 為了畫面順暢通常會用.requestAnimationFrame
+
+})()
+
+  </script>
+</body>
+</html>

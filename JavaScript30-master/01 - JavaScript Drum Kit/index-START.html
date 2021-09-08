@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="#">
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+<script>
+
+(function(){
+
+  function playHandler(e){
+  //console.log(e)
+  const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`)
+  if(audio) {
+    audio.currentTime = 0
+    audio.play()
+  } 
+  //play music
+
+  const dom = document.querySelector(`div[data-key="${e.keyCode}"]`)
+  if(dom) dom.classList.add('playing')
+  //console.log(audio,dom)
+}
+  function transitionendHandler(e){
+    //console.log(e)
+    if(e.propertyName === 'transform'){
+    //  console.log(e.currentTarget)
+      e.currentTarget.classList.remove('playing')
+    }
+  }
+  //dom style
+
+window.addEventListener('keydown',playHandler)
+document.querySelectorAll('.key').forEach(function(key){
+    key.addEventListener('transitionend',transitionendHandler)
+  })
+
+})()
+/*
+(function(){ //第一件事情 關門 不讓資料外洩出去
+
+  window.addEventListener('keydown',playHandler)
+//選擇keydown or keyup 差別在於keydown按著不放會一直執行
+
+function playHandler(e){  //e = event 事件 這裡代表事件的值
+  
+  console.log(e)  //從這個console可以看到每個按鈕都有一個keycode對應的就是date-key
+  
+  const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`)
+  這裡用const比較好是因為事件一次只會做動一次
+  .querySelector()是靜態的可以解決90%的情況除非今天是要做動態的資料才用.getElementsByID()
+  `audio[date-key = "$(e.keycode)"]` 這段的用法是ES6的Template Literal 
+  可以用``包起來就可以寫字串然後${}寫變數
+  整段的意思就是設 audio = <audio date-key="e.keycode">
+  
+    if(audio) {
+      //if(audio)代表 當執行到這裡時如果有audio則play 沒有澤部動作
+    audio.currentTime = 0
+    //播放時間=0 這樣才能取消播完才能再做動
+    audio.play()
+    //播放audio 
+  } 
+
+  //另一種寫法 if(!audio) return 反向思考的寫法  !代表否定  假設沒有audio則中斷執行  沒有這句按下沒有定義的按鈕會報錯
+  //play music
+
+  const dom = document.querySelector(`div[data-key="${e.keyCode}"]`)
+  //跟上面一樣只是這次是抓div
+
+  if(dom) dom.classList.add('playing')
+  //按下按鍵以後增加一個playing的class if(dom)如果有這個div則執行增加class
+  //這裡的.add跟後面的.remove不能用.toggle取代  因為開啟動畫結束後會執行一次.toggle 結束動畫結束後會再執行一次 .toggle 就會無盡迴圈了
+  
+  const keys = Array.from(document.querySelectorAll('.key'))
+  因為querySelectorAll('.key')抓出來的是Node.List但不是Array
+  因此用Array.from將字串變成陣列
+  為的是瀏覽器相容性的問題
+  但在這裡可以不用，因此可以寫成
+
+  }
+
+  document.querySelectorAll('.key').forEach(function(key){
+  key.addEventListener('transitionend',transitionendHandler)
+  })
+  抓到有.key的資料變動回傳
+  這邊會抓到transform的這三個
+    transform: scale(1.1);
+    border-color: #ffc600;
+    box-shadow: 0 0 1rem #ffc600;
+  藉由forEach()把需要的key拿出來用
+  key是自取的變數跟 .key 不一樣
+  key.addEventListener(transitionend,transitionendHandler)
+  監聽key這個事件結束並執行transitionendHandler
+  要注意因為是querySelectorAll 因此會有多個transitionend的事件結束
+
+  也可以寫成箭頭函式
+  document.querySelectorAll('.key').forEach(key => {})
+
+  function transitionendHandler(e){
+  console.log(e)
+  在這個console.log(e)可以發現按一次會回傳6個transitionend事件回來
+  if(e.propertyName === 'transform'){
+    抓取transform這個事件
+
+    console.log(e.currentTarget)
+    藉由currentTarget抓取事件本身在哪個dom層面發生
+    currentTarget 跟 target 一樣都是抓取在哪個dom發生差別在currentTarget抓的是綁定的dom 而target抓的是執行的dom，如果今天事件包了很多層則可能target是抓到子層而currentTarget是父層
+
+    e.currentTarget.classList.remove('playing')
+    在把添加的playing remove掉
+  }
+
+
+  //dom style
+  console.log(audio,dom)  //這個console.log可以看到當我們按下按鍵後會執行哪個audio跟dom
+}
+
+})() //關門結束
+
+最後做整理，把function放一起，把程式放一起
+*/
+</script>
+
+
+</body>
+</html>
