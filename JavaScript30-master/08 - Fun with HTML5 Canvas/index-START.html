@@ -7,6 +7,68 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+  (function(){
+
+    let canvas = document.querySelector('#draw');
+    let ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let colorDeg = 0;
+    let lineWidth = 50;
+    let direction = -1;
+    ctx.strokeStyle = `hsl(${colorDeg},100%,50%)`;
+    ctx.lineWidth = lineWidth;  //線寬
+    ctx.lineCap = 'round';//頂點 圓
+    ctx.lineJoin = 'round'; //折角
+
+
+    let down = false, drawing = false;  //mouseenter 增加 down值
+    let x = 0 , y = 0;
+    
+    canvas.addEventListener('mousedown', (e) => {
+      down = true; //把drawing改成down
+      [x, y] = [e.offsetX, e.offsetY];
+    })
+    
+    canvas.addEventListener('mousemove', (e) => {
+      if(!down || !drawing) return; //假設不是在畫畫則不要作動 mouseenter要同時判斷down跟drawing
+      //console.log('draw')
+
+
+      ctx.beginPath();
+      colorDeg = colorDeg < 360 ? colorDeg + 1 : 0;
+      ctx.strokeStyle = `hsl(${colorDeg},100%,50%)`;
+      
+      if(lineWidth < 1 || lineWidth > 50){ //如果lineWidth <1 跟 >50 就*-1讓他反過來執行
+        direction *= -1;
+      }
+
+      lineWidth += direction;
+
+      ctx.lineWidth = lineWidth;
+      ctx.moveTo(x, y);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      [x, y] = [e.offsetX, e.offsetY];
+      ctx.stroke();
+    })
+    
+    document.addEventListener('mouseup', () => { //配合mouseenter 把canvas改成document 讓他變整個螢幕作動
+      down = false;
+    })
+    
+    //canvas.addEventListener('mouseout',() => {}) //mouseout 在每個 dom更換層級的時候就會作動一次 EX div p span 從span到div就會觸發兩次
+    
+    canvas.addEventListener('mouseleave', () => {
+      drawing = false;
+    }) //只會觸發一次
+
+    canvas.addEventListener('mouseenter', (e) => { //額外增加一個移出去在移入 這時就要增加一個down的變數並在mousemove變成雙向判斷
+      drawing = true;
+      [x, y] = [e.offsetX, e.offsetY];
+    })
+
+  })()
+
 </script>
 
 <style>
