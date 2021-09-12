@@ -19,6 +19,7 @@
     const comments = [
       { text: 'Love this!', id: 523423 },
       { text: 'Super good', id: 823423 },
+      { text: 'Super good2', id: 823423 },
       { text: 'You are the best', id: 2039842 },
       { text: 'Ramen is my fav food ever', id: 123523 },
       { text: 'Nice Nice Nice!', id: 542328 }
@@ -28,14 +29,109 @@
     // Array.prototype.some() // is at least one person 19 or older?
     // Array.prototype.every() // is everyone 19 or older?
 
+    let ansSome = people.some(p => {  //只要有一個是true則console為true
+      return new Date().getUTCFullYear() - p.year >= 19 // Date().getUTCFullYear()當前時間依照UTC抓取年份
+    })
+    console.log(ansSome)
+
+    let ansEvery = people.every(p => {  //只要有一個是false則console為false
+      return new Date().getUTCFullYear() - p.year >= 19 // Date().getUTCFullYear()當前時間依照UTC抓取年份
+    })
+    console.log(ansEvery)
+
+
+
     // Array.prototype.find()
     // Find is like filter, but instead returns just the one you are looking for
     // find the comment with the ID of 823423
 
+    let ansFind = comments.find(comment => comment.id === 823423) //find() 尋找資料跟filter不一樣的是find找到一個就會停止尋找
+    console.log('這是ansFind',ansFind)
+
+    let ansFilter = comments.filter(comment => comment.id === 823423) //find() 尋找資料跟find不一樣的是filter尋找全部
+    console.log('這是ansFilter',ansFilter)
+
+
+
     // Array.prototype.findIndex()
     // Find the comment with this ID
+
+    let ansFindIndex = comments.findIndex(comment => comment.id === 823423) //findIndex() 尋找資料跟find不一樣的是findIndex是會以數字顯示有沒有找到 有找到為1 沒找到為-1 跟find一樣找到第一個就會停止 
+    console.log('這是ansFindIndex',ansFindIndex)
+
     // delete the comment with the ID of 823423
 
+    //上面的要求是要刪掉id 823423 刪掉有兩種 slice 跟 splice
+
+    //slice 做法為複製一份原始資料在做動作
+    let ansSlice1 = comments.slice(0,ansFindIndex) //從頭到目標位置前切成一段
+    let ansSlice2 = comments.slice(ansFindIndex + 1) //從目標後一號到最後切一段
+    console.log('這是ansSlice1&2',ansSlice1,ansSlice2) //可以看到good被忽略了
+    let ansSlice3 = [...ansSlice1 , ...ansSlice2] //解構 重新組合成新的物件
+    console.log('這是ansSlice3',ansSlice3) //可以看到新的陣列就沒有good了但沒有動到原始資料排列 好處是不會動到api來的資料
+
+    //正式開發時節省code寫成
+    let ansSlice = [...comments.slice(0,ansFindIndex) , ...comments.slice(ansFindIndex + 1)]
+    console.log('這是ansSlice',ansSlice)
+
+
+
+    //splice 先複製位置再對複製的位置動刀
+    let ansSplice = [...comments].splice(ansFindIndex,1)
+    console.log('這是ansSplice & comments',ansSplice,comments)
+    //splice 直接對api來的資料動刀
+    let ansSplice1 = comments.splice(ansFindIndex,1) //splice(位置,刪除數量(個),同位置增加內容) splice(位置,1)刪除一個  splice(位置,0,aaa)不刪除在該位置增加aaa內容
+    console.log('這是ansSplice1 & comments',ansSplice1,comments) //前面為哪個被刪掉了 後面為刪掉後的物件
+
+
+    //額外  用find() 去修改or增加
+    let cart = [
+      { id:1 , count:1 },
+      { id:2 , count:1 },
+      { id:3 , count:1 },
+      { id:4 , count:1 },
+      { id:5 , count:1 }
+    ] 
+
+    let item = cart.find(item =>{
+      console.log(item.id)
+      return item.id ===3  //找第三個
+    })
+
+    item.count = 5
+    console.log(cart)
+
+
+    //說明複製位置的觀念
+    let newCart1 = [...cart] //解構
+    newCart1[0].count = 5
+    console.log('newCard1',cart[0],newCart1[0])
+
+    let newCart2 = [...cart.slice(0)] //解構
+    newCart2[0].count = 5
+    console.log('newCard2',cart[0],newCart2[0])
+    //可以看到以上兩種都是把物件的陣列拉出來放在另一個物件 但兩個源頭都是一樣的,js如果要複製就要像上面的slice一樣自己做一個新陣列或者json把陣列改字串在改陣列丟給另一個 或者用object.assign
+
+    //說明
+
+    let obj1 = {count: 1}
+    let obj2 = obj1
+    let obj3 = Object.assign({},obj2)  //object.assign
+    let obj4 = JSON.parse(JSON.stringify(obj3)) //json字串
+
+    obj1.count = 5
+    
+    console.log('obj1.count+obj2.count+obj3.count+obj4.count =',
+    obj1.count,'+',obj2.count,'+',obj3.count,'+',obj4.count,'=', obj1.count + obj2.count + obj3.count + obj4.count) // 5+5+1+1
+
+    //用array包物件 ary1在用json複製array (但json不能有function)  ary2用object.assign
+    let ary = [{name: 'mike'},{name:'candy'}]
+    let ary1 = JSON.parse(JSON.stringify(ary))
+    let ary2 = ary.map((item)=>{
+      return Object.assign({},item)
+    })
+
+    console.log(ary[0] === ary1[0],ary[0] === ary2[0]) //false 因為經過json跟object.assign是不一樣的矩陣了
   </script>
 </body>
 </html>
