@@ -17,29 +17,148 @@
       p.style.fontSize = '50px';
     }
 
+
+    //先把console包起來，以後測試完把true改成false就可以把整個console功能關起來
+    let console = {
+      isDev:true,
+      log(...args){
+        if (!this.isDev) return;
+        window.console.log("%c住手","font-size:60px;color:red;font-weight:400;")
+        window.console.log(...args);
+      },
+      warn(...args){
+        window.console.warn(...args);
+      },
+      error(...args){
+        window.console.error(...args);
+      },
+      info(...args){
+        window.console.info(...args);
+      },
+      assert(...args){
+        window.console.assert(...args);
+      },
+      dir(...args){
+        window.console.dir(...args);
+      },
+      table(...args){
+        window.console.table(...args);
+      },
+      count(...args){
+        window.console.count(...args);
+      },
+      time(...args){
+        window.console.time(...args);
+      },
+      timeEnd(...args){
+        window.console.timeEnd(...args);
+      }
+    };
+
     // Regular
-
+    console.log(234,456)
     // Interpolated
-
+    console.log('my name is %s !!!',"mike"); //s=string
+    console.log('i have  %f dollars!!!',3.45); //f=float
+    console.log('i have  %d dollars!!!',3.45); //d=decimal 10進制
+    let myName = "mike"
+    console.log(`my name is ${myName} !!!`); //ES6 一個打全部
     // Styled
 
     // warning!
-
+    console.warn('警告');
     // Error :|
-
+    console.error('錯誤');
     // Info
-
+    console.info('這是info'); //在特定的瀏覽器會有一個I的圖標在前面
     // Testing
+    console.assert(true,'assert message') //true 沒事，其他條件未通過則顯示訊息
+    console.assert(false,'assert message')
+    console.assert('','assert message')
+    console.assert(NaN,'assert message')
+    console.assert(0,'assert message')
+    console.assert(null,'assert message')
+    console.assert(undefined,'assert message')
 
     // clearing
-
+    //CTRL + L
     // Viewing DOM Elements
+
+    let p = document.querySelector('p');
+
+    console.log(p);
+    console.log(dogs);
+
+    console.dir(p);
+    console.dir(dogs);
 
     // Grouping together
 
+    console.table(dogs) //看json資料比較方便而已
+    console.table(dogs,['name']) //可以只看特定資料
+
     // counting
 
+    console.count('Wes');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+
     // timing
+
+    console.time('test1');
+    let i;
+    let j;
+    for (i = 1; i <1000; i++){
+      j = i;
+    }
+    console.timeEnd('test1');
+
+    console.time('test2');
+    for(let i = 1; i < 1000; i++){
+      let j = i;
+    }
+    console.timeEnd('test2')
+
+
+    //遍歷的時間區別
+    console.time('test ary1') //快
+    let ary1 = []
+    for (let i = 1; i < 100000; i++){
+      ary1.push(i)
+    }
+    ary1.forEach(item => { 
+      let j = item;
+    })
+    console.timeEnd('test ary1')
+
+    console.time('test ary2') //慢
+    let ary2 = []
+    for (let i = 1; i < 100000; i++){
+      ary2.push({ count: i})
+    }
+    ary2.forEach(item => {
+      let j = item;
+    })
+    console.timeEnd('test ary2')
+
+    console.time('test ary3') //超慢 所以資料不要亂混
+    let ary3 = []
+    for (let i = 1; i < 100000; i++){
+      ary3.push(i % 2 ? i : { count: i})
+    }
+    ary3.forEach(item => {
+      let j = item;
+    })
+    console.timeEnd('test ary3')
 
   </script>
 </body>
