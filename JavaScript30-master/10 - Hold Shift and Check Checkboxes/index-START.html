@@ -96,6 +96,35 @@
   </div>
 
 <script>
+  ;(function(){
+
+    const checkboxes = Array.from(  //轉陣列 為了slice
+      document.querySelectorAll('.inbox input[type="checkbox"]') 
+      );
+
+    let lastCheck = null; //紀錄上一次點的位置 先設成空的
+
+    function clickHandler(e){
+      console.log(e);
+      if(this.checked){ //假設按下去是打勾 執行下面 不然就跳到else
+        if(e.shiftKey && lastCheck !== null){ //確認是否要選區間 1.先看shift鍵有沒有按下去 也就是shiftKey的功能 2.看上一點沒有勾選 所以上一點必須不等於null 這邊要注意判斷式類型 如果是數字類型 系統在判斷會先轉成布林就會變成false就會失敗 所以要寫null 因此建議如果是數字類型的判斷不要放在if內
+          let nowCheck = checkboxes.indexOf(this); //抓取目前點到的位置
+          checkboxes.slice( //切範圍出來
+            Math.min(nowCheck,lastCheck), //但不知道是從上往下還是從下往上 因此要先比較大小
+            Math.max(nowCheck,lastCheck)
+            ).forEach(input => (input.checked = true)); //用forEach把區間內每個都變成true
+        }
+        lastCheck = checkboxes.indexOf(this);  //抓取目前點到的位置
+      } else { //沒有打勾就不做事情
+        lastCheck = null;
+      }
+    }
+
+    checkboxes.forEach(input => {
+      input.addEventListener('click',clickHandler)
+    });
+
+  })()
 </script>
 </body>
 </html>
