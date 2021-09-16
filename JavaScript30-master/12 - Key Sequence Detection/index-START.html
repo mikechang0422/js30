@@ -7,6 +7,43 @@
 </head>
 <body>
 <script>
+  ;(function(){
+    const secretCode = [38,38,40,40,37,39,37,39,66,65];//上上下下左右左右BA
+    const input = [];
+    window.addEventListener("keyup",function(e){ //偵測keyup 如果是keydown按著就掛了
+    input.push(e.keyCode);
+
+      while(input.length > secretCode.length){//如果沒有加這句成功一次後就會不會成功了，因為你的Input會一直增加 當你的input的數量>secretCode的數量時
+      input.shift(); //Input會砍掉最舊的那個
+      }
+
+      //input.splice(-secretCode.length - 1, pressed.length - secretCode.length);原始的寫法變成用數學的方式來解 第一次= -11 ,-9 第二次= -11,-8到第11次時便-11,1 就會砍掉一個
+
+
+      console.log(input)
+    if(input.join() === secretCode.join()){ //輸入的code = 密碼的code 因為是陣列因此要拉出來變string做比較 join()可以拉出來並每個之間用，切
+      console.log('KONAMI');
+      cornify_add();
+    }
+
+
+
+
+
+    //而外補充
+    //少用 for(let i=0; i<3;i++){
+    //a[i]
+    //}
+
+    //改用 a.forEach((item) => {
+    //  item
+    //})
+    //這種一樣可以寫成自己呼叫自己在閱讀上會更好理解
+    
+    //判斷是則盡量用三元或用計算的方式解決 少用for if
+    //以上都是為了閱讀速度 可以減少思考的念頭
+      });
+  })()
 </script>
 </body>
 </html>
