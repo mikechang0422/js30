@@ -57,6 +57,37 @@
         if (callNow) func.apply(context, args);
       };
     }
+//以上是原本準備的
+
+// debounce = 專門for連續觸發事件的功能所使用的像是下面的卷軸scroll 或之前的 mousedown  用於減少事件觸發以減少耗能 wait 等待多久執行一次 immediate 第一次是要等待還是馬上執行
+
+//window.scrollTo(X軸,Y軸) X寫0 Y寫100 就可以看到卷軸往下100 頁面往上100 這樣等同於網頁當前最頂點切齊的Y座標是多少
+
+      let images = document.querySelectorAll('img');//選取圖片 用all選取全部 但後面就要解決多重值ㄉ問題
+      //let img = document.querySelector('img') //只選取單張 可用在測試 
+
+      function  scrollHandler() {
+        //console.log(window.scrollY);//可以看到畫面捲到那兒
+
+        let windowTop = window.scrollY //window.screenY網頁頂點的位置
+        let windowBottom = window.scrollY + window.innerHeight //window.innerHeight網頁上到下的高度 所以加起來就是底線的Y座標
+
+        
+        images.forEach((img) => {//用forEach把多重值一個一個拆出來做
+          //if(img.offsetTop + img.height / 2 < windowBottom){ 
+            //img.offsetTop當圖片的頭小於網頁底下的高度 也就是圖片剛進入畫面中 但這樣的效果其實不太好 因為他還沒出去過半動畫就做完了
+            //所以要多 + img.height 圖片高度進來 再把圖片高/2 這樣圖片出現一半時就會有動畫算是再比較適當的時間產生動畫
+
+            //優化 if判斷式
+          let imgCenter = img.offsetTop + img.height / 2
+          if(imgCenter < windowBottom && imgCenter > windowTop){//圖片要介於頂點跟底部之間才要作動
+            img.classList.add('active'); //幫圖片增加 class="active"
+          }else {//實際，以UX來說使用者不一定想看圖片一直飛來飛去，因此不一定要做抽離
+            img.classList.remove('active')//當圖片不在螢幕內時拿掉active = 抽離圖片
+          }
+        });
+      }
+    window.addEventListener('scroll', scrollHandler);
 
   </script>
 
