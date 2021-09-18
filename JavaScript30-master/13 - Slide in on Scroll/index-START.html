@@ -43,21 +43,58 @@
   </div>
 
   <script>
-    function debounce(func, wait = 20, immediate = true) {
+//https://medium.com/@alexian853/debounce-throttle-%E9%82%A3%E4%BA%9B%E5%89%8D%E7%AB%AF%E9%96%8B%E7%99%BC%E6%87%89%E8%A9%B2%E8%A6%81%E7%9F%A5%E9%81%93%E7%9A%84%E5%B0%8F%E4%BA%8B-%E4%B8%80-76a73a8cbc39
+//以上為debounce 跟 throttle 的差別
+//像是chrome 線上應用程式的選項很明顯就是你不停我不做動而不是每隔多久就一定要做一次 (debounce) 而該範例更適合用throttle 各有優缺點看時機點使用
+
+    // function debounce(func, wait = 20, immediate = true) { //wait = 20 每20毫秒作動一次 immediate 第一次是否馬上啟動
+    //   var timeout;
+    //   return function() {
+    //     var context = this, args = arguments; //抓取不定長度的參數 可以抓所有的參數並以陣列呈現
+    //     var later = function() {
+    //       timeout = null;
+    //       if (!immediate) func.apply(context, args);//apply 指定function裡面的this 跟call不一樣 差在call傳遞的值為一個一個傳 apply會給陣列 功能上是差不多ㄉ
+    //     };
+    //     var callNow = immediate && !timeout;
+    //     clearTimeout(timeout); //每次丟進來就reset重設一次
+    //     timeout = setTimeout(later, wait);
+    //     if (callNow) func.apply(context, args);
+    //   };
+    // }
+//以上是原本準備的
+
+//原始的流程 第一次開始執行時 time -> undefind immediate -> true 往下走就會到timeout 然後執行callNow
+
+
+//以下是修改版
+
+function debounce(func, wait = 20, immediate = true) {
       var timeout;
       return function() {
         var context = this, args = arguments;
         var later = function() {
           timeout = null;
-          if (!immediate) func.apply(context, args);
+          //if (!immediate)
+          func.apply(context, args);
         };
-        var callNow = immediate && !timeout;
+        if (timeout) return
+        //var callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
+        if (immediate) func.apply(context, args);
       };
     }
-//以上是原本準備的
+
+//修改後: 每20ms執行一次  原始:每20ms不做任何事情才會執行一次
+
+
+
+
+
+
+
+
+
 
 // debounce = 專門for連續觸發事件的功能所使用的像是下面的卷軸scroll 或之前的 mousedown  用於減少事件觸發以減少耗能 wait 等待多久執行一次 immediate 第一次是要等待還是馬上執行
 
@@ -67,6 +104,7 @@
       //let img = document.querySelector('img') //只選取單張 可用在測試 
 
       function  scrollHandler() {
+        console.log(new Date().getTime());//這行是為了讓上面修改過的程式碼可以看出來每隔20ms就會執行一次
         //console.log(window.scrollY);//可以看到畫面捲到那兒
 
         let windowTop = window.scrollY //window.screenY網頁頂點的位置
@@ -87,8 +125,22 @@
           }
         });
       }
-    window.addEventListener('scroll', scrollHandler);
+    window.addEventListener('scroll',debounce(scrollHandler));//把scrollHandler交給debounce控制 好處:節省效能 問題:如果捲很快有時會被debounce過濾掉就看不到圖片了
+    //window.addEventListener('scroll', scrollHandler);
 
+
+
+    //什麼是閉包 可以看到下面的count 只會在這個function執行別的function是無法使用 稱之為閉包 優點:保護這個參數不被其他function汙染
+    //let count = function (num) {
+    //  let count = num
+
+    //  return function () {
+    //    console.log(++count)
+    //  }
+    //}
+    //let c1 = count(0)
+    //c1();//1
+    //c1();//2....
   </script>
 
   <style>
