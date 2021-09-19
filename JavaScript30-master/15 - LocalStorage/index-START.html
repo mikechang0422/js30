@@ -28,8 +28,45 @@
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  const items = JSON.parse(localStorage.getItem('items')) || [];//要知道自己拿到什麼 像這邊items就是陣列  然後用 or [] 來知道假如是空的要怎辦
 
+
+  function createList(data = [], dom) { //產畫面 做一個li的input
+    dom.innerHTML = data.map((plate, i) => {
+      return `
+        <li>
+          <input type="checkbox" data-index="${i}" id="item${i}" ${plate.done ? 'checked' : ''} />
+          <label for="item${i}">${plate.text}</label>
+        </li>
+      `;//三元運算 是否完成 完成則給checked 沒有就是空值
+    }).join('');//陣列轉字串 但可以自己決定隔開要什麼 預設逗點 這邊就是空格
+  }
+
+createList(items, itemsList);
+
+
+function addItem(e){
+  e.preventDefault();//因為用submit 會有跳轉畫面 因此直接擋掉不讓他作動
+  let input = this.querySelector('[name=item]');//this = 那顆button = submit 這邊的選取器也可以改成 input:first-child 但名子被更改的機會會比位置小很多
+  items.push({text: input.value, done: false}); //更新js資料
+  localStorage.setItem('items',JSON.stringify(items));//更新 localstorage的資料 setItem裡面是字串不要直接把資料丟進去會連帶影響到之前的資料
+  this.reset();//對整個form做reset  reset只能用在form 不能input
+  createList(items, itemsList);//更新畫面
+}
+
+function toggleItem(e){
+  console.log(e.currentTarget,e.target);//currentTarget 選擇事件本體(父層) target選擇觸發的物件本身
+  if(!e.target.matches('input')) return;//避免重複觸發 需先判斷是input才執行
+  let index = e.target.dataset[index];//抓 data-index這個 會比再設一個id好
+  items[index].done = !items[index].done;// 更新資料
+  localStorage.setItem('items',JSON.stringify(items));//更新 localstorage的資料 
+  createList(items, itemsList);//更新畫面
+}
+
+//我們在使用時可以發現因為事設定data-index才有執行 那也因input 跟 label是綁定的因此原本在input才有做動的 在label也會觸發(但會先觸發label帶到input = 2次) 因此當碰到li 的 padding範圍時是不會觸動的
+
+addItems.addEventListener('submit',addItem); //用form表的submit去送出資料 送出資料有兩種方式一種就是form表的submit 另一種就是直接監聽事件像是click然後call api 兩種的差別在form會有換頁的狀態發生(跳轉頁面) 而直接call api可以在原本狀態直接執行 因此各有好壞但如果都要call api第二種會方便一點
+itemsList.addEventListener('click',toggleItem);
 </script>
 
 
