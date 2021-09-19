@@ -7,8 +7,32 @@
 <body>
 
   <script>
+    //這應該在第一天的XD
     // start with strings, numbers and booleans
 
+    let a = 'A';
+    let b = a;
+    a = 'B';
+    console.log(a,b); //B,A
+
+    let c = 0;
+    let d = c;
+    c++;
+    console.log(c,d); //1,0
+
+    let e = true;
+    let f = e;
+    e = !f;
+    console.log(e,f); //false,true
+    
+    let g = "A";
+    let h = "A";
+    let i = "A";
+    (h = "B") , (i = "C") , (g += h) , (g += i);
+    console.log(g,h,i)
+
+
+    //第二趴 來討論複製陣列
     // Let's say we have an array
     const players = ['Wes', 'Sarah', 'Ryan', 'Poppy'];
 
@@ -16,9 +40,15 @@
 
     // You might think we can just do something like this:
 
+    let players2 = players;
+
     // however what happens when we update that array?
 
+    players2[0] = 'Mike'; //預設思想應該是改道players2的第一個名子而已
+
     // now here is the problem!
+
+    console.log(players,players2); //兩個都被改掉了 因為都指向同一個記憶體位置
 
     // oh no - we have edited the original array too!
 
@@ -28,6 +58,47 @@
 
     // one way
 
+    let players3 = players.slice(); //先把players的資料抓出來然後用slice一個一個切開，就不是陣列了，然後再塞到players3 因為中間已經不是陣列了因此 players3 就變成一個新陣列
+    
+    players3[0] = 'Eley';
+
+    console.log(players,players3);// (Mike,Eley) 這時就不一樣了
+
+    let players4 = [].concat(players3);//用concat來製造新陣列
+    players4[0] = "Endy";
+
+    let players5 = [...players4];//ES6的解構 -> 解構 = 拆開再組回去
+    players5[0] = 'Elices';
+
+    console.log(players4,players5);
+
+    function createObj(name) {
+      return {
+        name
+      };
+    }
+    
+    let p1 = createObj('Mike');
+    let p2 = createObj('Elices');
+    let p3 = createObj('Sandy');
+
+    let f1 = [p1,p2,p3];
+    let f2 = f1.slice();
+
+    f2[0].name = 'I am Mike';
+
+    console.log(f1[0].name,f2[0],f2[0].name);//Mike, I am Mike, I am Mike 可以特別看到第二個特別跟你講他是name喔
+
+
+    f2[0] = 'I am Mike';
+
+    console.log(f1[0].name,f2[0],f2[0].name);//Mike, I am Mike,undefined 第三個因為我們在加入時沒有註明是.name因此系統認為是新的資料
+
+    f2[0].name = 'I am Mike';
+
+    console.log(f1[0].name,f2[0],f2[0].name);//Mike, I am Mike,undefined 跟上面一樣 因為他已經不是name了
+
+
     // or create a new array and concat the old one in
 
     // or use the new ES6 Spread
@@ -36,11 +107,83 @@
 
     // The same thing goes for objects, let's say we have a person object
 
+
+    //最後一趴物件
     // with Objects
-    const person = {
+    let person = { //先改let
       name: 'Wes Bos',
       age: 80
     };
+
+    let q2 = person;
+
+    //case1
+    //person = 'xxx';
+    //console.log(person,q2);//會報錯因為是const 改let就沒事ㄖ 結果 xxx , {}
+
+    
+    //先介紹Object.assign()
+    let aa = {name: 'Mike',age: 30,say:function(){
+      console.log('hi');
+    }};
+    let bb = {name: 'Elise'};
+    let cc = Object.assign(aa,bb);
+    console.log(aa,cc);//物件的觀念 有新的就取代 沒有就沿用
+    cc.name = 'mike';
+    console.log(aa.name , cc.name ,aa.name === cc.name)//比較aa跟cc的資料是不是吃同一個記憶體 -> true
+    
+    let xx = Object.assign({},cc); //將cc塞進去空物件
+    xx.say = function(){
+      console.log('cc say hi');
+    }
+    console.log(cc.name === xx.name);//同樣的資料記憶體還是吃同一支
+    xx.name = 'Mike';//修改xx物件的值
+    console.log(cc.name , xx.name , cc.name === xx.name);//這次不一樣了因為新物件找不到新的值因此將新的值放在新的記憶體內
+    console.log(cc.say(),xx.say());//結果是hi cc say hi 代表Object.assign() 將資料塞進去空物件以後就變成了新的物件
+
+
+    //Json的用法
+    let dd = JSON.parse(JSON.stringify(aa)); //類型的轉變 {aa}物件 -> .stringify'({aa})'字串 -> .parse({aa})物件 = dd
+    console.log(aa,cc,dd);//因為複製的深度不夠，因此dd會把function給忽略掉 ， 但 cc 會保留function
+    dd.name = 'BigMike';
+    console.log(aa.name,dd.name,aa.name === dd.name);//比較aa跟dd的資料是不是吃同一個記憶體 -> false
+
+
+
+    //case2
+    person.name = 'xxx';
+    console.log(person,q2);//{xxx...},{xxx...}
+    let q3 = Object.assign({},person);//用assign 把person物件塞進去空物件
+
+
+    //探討淺拷貝&深拷貝
+    const wes = {
+      name: 'Wes',
+      age: 100,
+      social: {
+        twitter: '@wesbos',
+        facebook: 'wesbos.developer'
+      }
+    };
+
+    let wes2 = Object.assign({},wes);
+    console.log(wes,wes2,wes === wes2);// false 經過空陣列填入 兩個是不同的物件了 但目前讀到的是同一個記憶體 因此我們如果在這裡改變內容
+    wes2.age = 10;
+    console.log(wes.age,wes2.age);// 記憶體因為沒有10而產生了新的一筆資料並提供另一個記憶體空間儲存10
+    //接著我們討論物件裡的物件
+    wes2.social = 0;//wes2的social整組清掉 -> 新物件&新記憶體空間
+    console.log(wes.social,wes2.social,wes.social === wes2.social);//所以是false
+
+    wes2.social.twitter = '@mike';//改動social裡面的資料
+    console.log(wes.social,wes2.social, wes.social === wes2.social);//因為social本身就存在記憶體中 因此當我們修改記憶體內的資料 wes也會呈現被修改後的資料
+
+    let wes3 = JSON.parse(JSON.stringify(wes));//先stringify把資料變string 接著在.parse把資料變成物件
+    console.log(wes.social === wes3.social);//false 因此得知新的social是放在另一個記憶體內
+    console.log(wes.social.twitter === wes3.social.twitter);//但是兩者之間的資料引用的是同一個記憶體的資料
+
+
+    //從這裡可以知道 一般的資料像是 string number 布林 undefined 等基本都是用同一組記憶體的資料
+    //而物件，陣列等在填充資料時則會開一個新的記憶體給新的物件跟陣列
 
     // and think we make a copy:
 
@@ -50,6 +193,32 @@
 
     // Things to note - this is only 1 level deep - both for Arrays and Objects. lodash has a cloneDeep method, but you should think twice before using it.
 
+
+    //額外補充 function複製
+    let obj = {
+      test: function(){
+        console.log(123);
+      }
+    }
+
+    let fn1 = function(){
+      console.log(1);
+    };
+
+    Function.prototype.clone = function() {
+      let fct = this;
+      let clone = function(){//把原本function在包一層
+        return fct.apply(this, arguments);//用apply把原本的參數丟進去 arguments抓值
+      };
+      clone.prototype = fct.prototype;//兩邊function 的 prototype要一樣
+      for (property in fct){
+        if(fct.hasOwnProperty(property) && property !== 'prototype'){ //確認兩邊的物件是一樣的
+          clone[property] = fct[property];
+        }
+      }
+      return clone;
+    };
+    let fn2 = fn1.clone();
   </script>
 
 </body>
