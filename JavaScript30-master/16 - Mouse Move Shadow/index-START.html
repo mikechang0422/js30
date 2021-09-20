@@ -35,6 +35,37 @@
   </style>
 
 <script>
+  ;(function(){
+
+    let length = 100; //做個100來*比較好看 因為位置是一堆小數點
+    let text = document.querySelector('h1');
+
+    document.querySelector('.hero').addEventListener('mousemove',function(e){
+      console.log(e)
+    
+      let { offsetX, offsetY } = e;
+
+      if(e.target !== this){ //當摸到子層時會拿子層的寬高位置來計算造成分子錯誤，因此要把子層相對父層(0,0)的距離(x,y)加回來才會是對的位置  第一個this.target = 當前摸到的位置  第二個!==this 代表不是摸到自己
+        offsetX += e.target.offsetLeft; //+位置差X的部分
+        offsetY += e.target.offsetTop; //+位置差Y的部分
+      };
+
+
+      let lengthX = Math.floor(offsetX / this.offsetWidth * length) * 2 - length;//math.floor 無條件捨去
+      let lengthY = Math.floor(offsetY / this.offsetHeight * length) * 2 - length;//為了要讓陰影能360度都有效果因此範圍要 -1 ~ 1 但原本是0 ~ 1 因此要*2擴大範圍在-自己 這樣範圍加大 但值是對的
+
+      text.style.textShadow = `
+      ${lengthX * -2}px ${lengthY * -2}px 5px rgba(255,122,255,.8),
+      ${lengthX * -2}px ${lengthY * 2}px 5px rgba(122,122,255,.8),
+      ${lengthX * 2}px ${lengthY * -2}px 5px rgba(255,255,122,.8),
+      ${lengthX * 2}px ${lengthY * 2}px 5px rgba(122,122,122,.8)
+      `
+
+    })
+
+
+
+  })()
 </script>
 </body>
 </html>
