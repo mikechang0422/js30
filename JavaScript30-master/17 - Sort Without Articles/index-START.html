@@ -49,6 +49,30 @@
 const bands = ['The Plot in You', 'The Devil Wears Prada', 'Pierce the Veil', 'Norma Jean', 'The Bled', 'Say Anything', 'The Midway State', 'We Came as Romans', 'Counterparts', 'Oh, Sleeper', 'A Skylit Drive', 'Anywhere But Here', 'An Old Dog'];
 
 
+function strip(bandName) { //正則
+  return bandName.replace(/^(a |the |an )/i, '').trim();//開頭如果是a the an則改成空字串
+};
+
+
+//bands.sort((a,b) => (strip(a) > strip(b) ? 1 : -1) );
+//把字經過.charCodeAt() 變成一個值在藉由這個值來比較 三元運算 如果大於是1 不然是-1  sort為操作原始陣列
+
+
+//bands.sort();
+//document.getElementById('bands').innerHTML = bands.map(band => `<li>${band}</li>`).join('');
+
+//以上操作會動到原始資料
+
+//以下不動原始資料
+
+let sortedBands = [...bands].sort((a,b) => (strip(a) > strip(b) ? 1 : -1) 
+);//提供一個可變變數sortedBands供未來使用 稱inbeautiful  將bands解構 在用sort排列
+
+
+document.getElementById('bands').innerHTML = sortedBands.map(band => `<li>${band}</li>`).join('');
+
+console.log(sortedBands === bands); //結果 false
+//不動原始資料 優點:保留原始資料 缺點:記憶體要多用在新的資料 未來的資料管理要做好
 </script>
 
 </body>
