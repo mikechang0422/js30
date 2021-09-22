@@ -182,6 +182,81 @@
     </li>
   </ul>
 <script>
+  ;(function(){
+    let li = document.querySelectorAll('li');
+    //console.log(li);//出來是like array 但不是array喔
+    
+    //四種解法 由上而下 技術越來越新
+    let a = Array.from(li).map(item => item);//難度1 做一個陣列 從li來
+    
+
+    let b = [].map.call(li, item => item);//難度3 call 處理類陣列
+    let c = [].map.apply(li, [item => item]);//難度3 apply 處理陣列
+    
+
+    //let d = [...li].map(item => item);//難度2 ES6解構
+    //console.log(a,b,c);//可以看到四個都一樣
+    
+    //使用ES6來做
+    let d = [...li]//解構 = 把li的東西拆出來 放進去陣列
+    .map(item => item.dataset.time)//用map把item的值抓出來，用dataset抓data資料的time值 然後return回來 有問題的話可以先在這做個 console.log(d)
+    .map(time => {//抓取上面的time值
+      let [min,sec] = time.split(':');//藉由.split(:)把原本time的 [A值:B值]拆成[A值,B值]並丟進[min,sec]陣列裡 因此min = A值 sec=B值;  可以把:改成,會發現變Nan因為split找不到正確的位置切割
+      return min * 60 + sec * 1;//值變成秒 回傳  因為陣列裡面的是字串 * 可以把字串轉成數字
+
+    //在來做加總 有兩種做法 for迴圈 或 forEach 選 forEach會更好一點 因為他是function不是迴圈 在解讀上更好一點  但有個更好的 就是 .reduce()
+
+    }).reduce((prev,next) => prev + next,0)//用reduce來加總 起始從0開始 回傳(前一個值+當前的值)  console.log(d) = 總共秒數
+    
+    
+    //把總秒數變成 00:00:00
+
+    //第一種 先算秒
+    let sec = d % 60;//取餘數  秒會是除完剩下的值
+    
+    let min = (d-sec) / 60;//把餘數扣掉後再除 就是整數 不然會有小數點
+    // === let min = Math.floor(d / 60)
+    let hour = Math.floor(min / 60);
+    // === let hour = (d - min * 60 - sec) / 3600  總秒數-秒-分*60 = 小時的秒的整數 /3600 = 小時
+    min %= 60;// === min = min % 60
+
+
+    console.log(`${hour}:${min}:${sec}`);
+
+    //第二種 先算小時
+    let Hour = Math.floor(d / 3600);
+
+    let Min = Math.floor((d % 3600) / 60);
+
+    let Sec = d % 60;
+
+    console.log(`${Hour}:${Min}:${Sec}`);
+  })();
+
+
+
+
+  //JS 數學 入門  + - * / 餘數 百分比 整數  再來就是canvas的三角函數了
+
+
+  //額外補充 箭頭函式
+
+  //function(參數){執行...}   =   (參數) => {執行...}   最一般的function轉箭頭函式
+  // (item) => { return item.dataset.time }  === 一般寫法
+  // 假如沒有大括號  (參數) => 返回訊息...  ===  (參數) => return...  如果只有一個參數() 也可以省略  ===  參數 => 返回訊息...
+
+
+  //額外補充 .map()
+  //原型： Array.prototype.map();
+  //功能： 建立一個新的陣列，其內容為原陣列的每一個元素經由回呼函式運算後所回傳的結果之集合。
+  //回傳值： 回傳新陣列，原陣列不改變。對陣列中的各元素進行操作，操作後的值會被寫入新的陣列中並返回。
+  //參數： callback 函式和thisArg第二參數可忽略。
+  //改變： 不會改變原陣列。
+  //語法： var new_array = arr.map(function callback(currentValue[, index[, array]]) { // Return element for new_array }[, thisArg])
+
+
+  //額外補充 .reduce()
+  //.reduce((prev,next) => {},0)  ===  .reduce((前一個加總,當前值) => {執行...},起始值)
 </script>
 </body>
 </html>
