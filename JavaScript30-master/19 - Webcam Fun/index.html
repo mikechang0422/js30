@@ -10,7 +10,10 @@
   <div class="photobooth">
     <div class="controls">
       <button onClick="takePhoto()">Take Photo</button>
-<!--       <div class="rgb">
+      <button onclick="switchType(1)">Type 1</button>
+      <button onclick="switchType(2)">Type 2</button>
+      <button onclick="switchType(3)">Type 3</button>
+      <div class="rgb">
         <label for="rmin">Red Min:</label>
         <input type="range" min=0 max=255 name="rmin">
         <label for="rmax">Red Max:</label>
@@ -29,13 +32,13 @@
         <input type="range" min=0 max=255 name="bmin">
         <label for="bmax">Blue Max:</label>
         <input type="range" min=0 max=255 name="bmax">
-      </div> -->
+      </div>
     </div>
 
     <canvas class="photo"></canvas>
     <video class="player"></video>
-    <div class="strip"></div>
   </div>
+  <div class="strip"></div>
 
   <audio class="snap" src="./snap.mp3" hidden></audio>
 
