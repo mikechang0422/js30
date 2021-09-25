@@ -10,7 +10,41 @@
   </div>
 
 <script>
+  //SpeechRecognition僅用chrome 是串google的api來負責轉譯講話 以下只用到SpeechRecongnition.onresult的事件來執行
+
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognition = new SpeechRecognition();
+  recognition.interimResults = true;//true = 一個一個字判斷+輸出 false = 整句判斷+輸出 對於輸出字的正確錯誤有影響
+  recognition.lang = 'zh-TW'; //看你要出哪國語言
+  
+  let p = document.createElement('p');//變數p = 創立<p>
+  const words = document.querySelector('.words');//words = 創立div.words
+  words.appendChild(p);//把p丟進去.words
+
+  recognition.addEventListener('result', e => {
+
+    console.log(e);
+    //results 的 SpeechRecognitionSesults 的 SpeechRecognitionAlternative 的 transcript 就可以看到語音辨識的結果
+
+
+    const transcript = Array.from(e.results)//把array的資料一筆一筆拉出來(講話的內容)
+      .map(result => result[0])//只抓第一筆
+      .map(result => result.transcript)//抓result裡的transcript也就是結果
+      .join('');//去掉,出輸 就是畫面要呈現的字(但還沒呈現喔)
+
+      const poopScript = transcript.replace(/poop|poo|shit|dump/gi, '💩'); //當你講到以下單字的時候由💩取代
+      p.textContent = poopScript;
+
+      if (e.results[0].isFinal) { //假設results第一個的值全出完了
+        p = document.createElement('p');//則創造新的P
+        words.appendChild(p);//把值塞進去P
+      }
+  });
+
+  recognition.addEventListener('end', recognition.start);//當關閉時自動啟動，避免中斷連線後就停掉了
+
+  recognition.start();//一定要啟動~不啟動就沒有功能
 
 
 </script>
@@ -22,7 +56,7 @@
     }
 
     body {
-      background: #ffc600;
+      background: #ff00f2;
       font-family: 'helvetica neue';
       font-weight: 200;
       font-size: 20px;
