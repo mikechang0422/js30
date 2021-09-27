@@ -22,19 +22,76 @@
       <label for="pitch">Pitch:</label>
 
       <input name="pitch" type="range" min="0" max="2" step="0.1">
-      <textarea name="text">Hello! I love JavaScript 👍</textarea>
+      <textarea name="text">Hello! 我覺得雅綾👍👍得</textarea>
       <button id="stop">Stop!</button>
       <button id="speak">Speak</button>
 
     </div>
 
 <script>
-  const msg = new SpeechSynthesisUtterance();
+  const Utterance = new SpeechSynthesisUtterance(); //設一個語音要播放的值
+  Utterance.text = document.querySelector('[name="text"]').value;//抓取輸入的值並把值丟上面
+
   let voices = [];
-  const voicesDropdown = document.querySelector('[name="voice"]');
-  const options = document.querySelectorAll('[type="range"], [name="text"]');
-  const speakButton = document.querySelector('#speak');
+  const voicesDropdown = document.querySelector('[name="voice"]');//語音合成器的選項
+  const options = document.querySelectorAll('[type="range"], [name="text"]');//同時監聽range跟text
+  const speakButton = document.querySelector('#speak');//按下去開始講
   const stopButton = document.querySelector('#stop');
+
+  function populateVoices() {//當voicechange有作動則執行這 把系統有的語音合成器顯示出來給你選
+    voices = this.getVoices();
+    voicesDropdown.innerHTML = voices
+      .filter(voice => voice.lang.includes('zh'))
+      .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+      .join('');
+  }
+
+  function setVoice() {//語音合成更換時轉換合成器
+    Utterance.voice = voices.find(voice => voice.name === this.value);
+    play();
+  }
+
+  function play() {
+    stop();//當語音撥放中則停止
+      speechSynthesis.speak(Utterance);//然後重新講
+  }
+
+  function stop() {
+    speechSynthesis.cancel();//當語音撥放中則停止
+  }
+
+
+  function setOption() {//當語速跟音調轉換時把值丟給合成器再撥一次
+    console.log(this.name, this.value);
+    Utterance[this.name] = this.value;
+    play();
+  }
+
+  speechSynthesis.addEventListener('voiceschanged', populateVoices); //然後監聽一個voiceschanged 這裡的speechSynthesis是windows的事件(語音合成器)跟上面的SpeechSynthesisUtterance()不一樣
+  voicesDropdown.addEventListener('change', setVoice);//當語音合成器更換時
+  options.forEach(option => option.addEventListener('change', setOption));//轉換語速與音調  以後在寫多重資料輸入時可考慮像這樣的寫法 陣列的a = a 陣列的b = b 然後用foreach就可以一次做掉多組的資料寫入 就像上面setOption() [this.name] = this.value
+
+  //上面這句就等於下面這三句
+
+  //rateInput.addEventListener('change',function(){
+  //  Utterance.rate = this.value
+  //  轉寫成 Utterance.[this.name] = this.value
+  //})
+
+  //pitchInput.addEventListener('change',function(){
+  //  Utterance.pitch = this.value
+  //  轉寫成 Utterance.[this.pitch] = this.value
+  //})
+
+  //textInput.addEventListener('change',function(){
+  //  Utterance.text = this.value
+  //  轉寫成 Utterance.[this.text] = this.value
+  //})
+
+
+  speakButton.addEventListener('click', play);
+  stopButton.addEventListener('click', stop);
+
 </script>
 
 </body>
