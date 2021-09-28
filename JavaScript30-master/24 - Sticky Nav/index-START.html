@@ -83,7 +83,7 @@
     else{
       //normal
       document.body.classList.remove('fixedMenu');
-      document.body.style.paddingTop = "";//離開fixed模式 用空值取代掉  JS移除是給空值不是刪掉
+      document.body.style.paddingTop = "";//離開fixed模式 用空值取代掉  原始寫法為設0會發現paddingTop就會留在stype內，比較不好  JS移除是給空值不是刪掉
     }
   }
 
