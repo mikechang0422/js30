@@ -4,6 +4,21 @@
   <meta charset="UTF-8">
   <title>Sticky Nav</title>
   <link rel="stylesheet" href="style-START.css">
+<style>
+  /*body.fixedMenu { 這是為了補當nav被fixed時抽離的高度 但不適用變版
+    padding-top: 74px;
+  }*/
+
+  .fixedMenu #main{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .fixedMenu #main .logo{
+    max-width: 100%;
+  }
+</style>
 </head>
 <body>
 
@@ -55,6 +70,27 @@
 
 <script>
 
+  let nav = document.querySelector('#main');
+  let navPosition = nav.offsetTop;
+
+  function scrollHandler(){
+    //console.log(window.scrollY , nav.offsetTop)
+    if(window.scrollY >= navPosition){//當卷軸捲超過nav的top時
+      //fixed menu
+      document.body.classList.add('fixedMenu')
+      document.body.style.paddingTop = nav.offsetHeight + "px";//抓當下裝置nav的高 並設定給paddingTop
+    }
+    else{
+      //normal
+      document.body.classList.remove('fixedMenu');
+      document.body.style.paddingTop = "";//離開fixed模式 用空值取代掉  JS移除是給空值不是刪掉
+    }
+  }
+
+  window.addEventListener('scroll',scrollHandler)
+  window.addEventListener('resize',function(){//當畫面變版或有變動時重新讀一次nav的頂點 因為她當便fixed時 nav.offsetTop為0  原本的就沒做~因此當尺寸有變動後fixed就會在錯誤的高度執行
+    navPosition = nav.offsetTop;
+  })
 </script>
 
 </body>
