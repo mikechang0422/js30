@@ -3,46 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <title>Understanding JavaScript's Capture</title>
+  <style>
+    html {
+      box-sizing: border-box;
+    }
+    
+    *, *:before, *:after { 
+      box-sizing: inherit; 
+    }
+  
+    div {
+      width: 100%;
+      padding: 100px;
+    }
+  
+    .one {
+      background: thistle;
+    }
+  
+    .two {
+      background: mistyrose;
+    }
+  
+    .three {
+      background: coral;
+    }
+  </style>
+  
 </head>
 <body class="bod">
-
+<button>button</button>
   <div class="one">
     <div class="two">
       <div class="three">
       </div>
     </div>
   </div>
+<ul>
+  <li><a href="#" class="button">button1</a></li>
+  <li><a href="#" class="button">button2</a></li>
+  <li><a href="javascript:;" class="button">button3</a></li>
+</ul>
 
-<style>
-  html {
-    box-sizing: border-box;
-  }
-  
-  *, *:before, *:after { 
-    box-sizing: inherit; 
-  }
-
-  div {
-    width: 100%;
-    padding: 100px;
-  }
-
-  .one {
-    background: thistle;
-  }
-
-  .two {
-    background: mistyrose;
-  }
-
-  .three {
-    background: coral;
-  }
-</style>
-
-<button></button>
 <script>
+let button = document.querySelector("button");
+button.addEventListener("chick",buttonHandler,{capture:true,once:false});//預設{capture:false,once:false} once改ture則只會監聽一次
+function buttonHandler(){
+console.log('Button Click');
+}
 
+let divs = document.querySelectorAll('div');
+divs.forEach(dom => {
+  dom.addEventListener('click',divHandler,{capture:false});
+});
+
+function divHandler(e){
+  e.stopPropagation();//中斷事件的傳遞 不開顯示321 開是3 因為{capture:false}是bubbling 如果{capture:true} 則是one 因為第一次觸發完就結束了
+  console.log(e.path);
+  //capture:ture [div.three, div.two, div.one, body.bod, html, document, Window]
+  //capture:false [div.three, div.two, div.one, body.bod, html, document, Window]
+  //不管是capture 或 bubbling 都會印出完整的執行路徑
+  console.log(this.className);
+}
+
+
+let as = document.querySelectorAll('a');
+as.forEach(dom => {
+  dom.addEventListener('click',aHandler,{capture:false ,passive:false});//passive:true 不能阻擋dom原始功能
+});
+
+function aHandler(e){
+  e.preventDefault();//擋掉原始dom有的功能 像是button的跳頁
+  //console.log("綁定 A click",this);//如果後面有新加的按鈕(js動態出出來的)則沒有效果
+}
+
+
+let ul = document.querySelector("ul");
+ul.addEventListener('click',ulHandler);
+function ulHandler (e){
+  //console.log('e.target : ' + e.target,'e.currentTarget : ' + e.currentTarget)//以汽車轉彎來當例子 currentTarget = 汽車  target = 裡面操縱方向盤的人
+  console.log('e.target.classList : ' + e.target.classList.contains('button'),'e.path : ' + e.path.find(dom => {
+      return dom.classList && dom.classList.contains('button');
+    }))
+
+  if (e.target.nodeName === 'A'){ //nodeName = tag name 但輸出是大寫 因此對比也要是大寫
+    
+    e.preventDefault();
+    console.log('Delegate A click',e.target);//如果是新增的a則一樣有console 但不會有Binding
+  }
+
+}
+
+
+//綁定事件 一個蘿蔔一個坑 一個button一個功能 用在focus 或 alert事件
+//委派事件 一個class或a 一種功能 只要用同一個class或a tag就全吃該功能 常用在js出資料的頁面 也用在滑鼠&鍵盤事件 只要是冒泡大概都OK
+
+  //capture 捕獲階段 由外往內找  div>p>button
+  //bubbling 氣泡階段 由內往外找 button>p>div
 </script>
 </body>
 </html>
