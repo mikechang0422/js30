@@ -35,6 +35,66 @@
   </div>
 
 <script>
+
+// const list = document.querySelector('.items');
+// let startX = 0;
+
+
+// const startDrag =function(e){
+//   list.classList.add('active');
+//   startX = e.pageX;
+// }
+// const dragHandler =function(e){
+//   if(list.classList.contains('active')){//當是mousedown時才啟動
+//   let move = e.pageX - startX;//移動的距離
+//   startX = e.pageX;//移動後要把座標移到新的位置
+//   list.scrollLeft -= move * 3;//拖曳跟移動方向是反的 *3只是為了拉一點點畫面就滑很遠
+// }}
+// const stopDrag =function(){
+//   list.classList.remove('active');
+// }
+// dragHandler
+
+// list.addEventListener('mousedown',startDrag);//手機的話就要改用touchstart
+// list.addEventListener('mousemove',dragHandler);//touchmove
+// list.addEventListener('mouseup',stopDrag);//touchend
+// list.addEventListener('mouseleave',stopDrag);
+
+
+
+//第二種作法 
+const list = document.querySelector('.items');
+let startX = 0;
+let startScroll = 0;
+let startTime = 0;
+
+const startDrag =function(e){
+  list.classList.add('active');
+  startX = e.pageX;
+  startScroll = list.scrollLeft;//起始點 跟第一種不一樣的是拿原點計算 不一直更新原點位置
+  startTime = new Date().getTime();//手指滑動的時間
+}
+const dragHandler =function(e){
+  if(list.classList.contains('active')){
+  let move = e.pageX - startX;
+  list.scrollLeft = startScroll - move * 3;
+}}
+const stopDrag =function(){
+  list.classList.remove('active');
+  if(new Date().getTime() - startTime <= 500){//手指滑動的時間 < .5s
+  if(e.pageX > startX){
+    console.log('swiper right');
+  }
+  else if (e.pageX < startX){
+    console.log('swiper left');
+  }}
+}
+
+list.addEventListener('mousedown',startDrag);//手機的話就要改用touchstart
+list.addEventListener('mousemove',dragHandler);//touchmove
+list.addEventListener('mouseup',stopDrag);//touchend
+list.addEventListener('mouseleave',stopDrag);
+
 </script>
 
   </body>
