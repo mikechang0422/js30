@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="items">
-    <div class="item item1">01</div>
+    <div class="item item1"><a href="#">01</a></div>
     <div class="item item2">02</div>
     <div class="item item3">03</div>
     <div class="item item4">04</div>
@@ -63,25 +63,64 @@
 
 
 //第二種作法 
+// const list = document.querySelector('.items');
+// let startX = 0;
+// let startScroll = 0;
+// let startTime = 0;
+
+// const startDrag =function(e){
+//   list.classList.add('active');
+//   startX = e.pageX;
+//   startScroll = list.scrollLeft;//起始點 跟第一種不一樣的是拿原點計算 不一直更新原點位置
+//   startTime = new Date().getTime();//手指滑動的時間
+// }
+// const dragHandler =function(e){
+//   if(list.classList.contains('active')){
+//   let move = e.pageX - startX;
+//   list.scrollLeft = startScroll - move * 3;
+// }}
+// const stopDrag =function(){
+//   list.classList.remove('active');
+//   if(new Date().getTime() - startTime <= 500){//手指滑動的時間 < .5s
+//   if(e.pageX > startX){
+//     console.log('swiper right');
+//   }
+//   else if (e.pageX < startX){
+//     console.log('swiper left');
+//   }}
+// }
+
+// list.addEventListener('mousedown',startDrag);//手機的話就要改用touchstart
+// list.addEventListener('mousemove',dragHandler);//touchmove
+// list.addEventListener('mouseup',stopDrag);//touchend
+// list.addEventListener('mouseleave',stopDrag);
+
+
+//額外加碼 擋掉連結
+
 const list = document.querySelector('.items');
 let startX = 0;
 let startScroll = 0;
 let startTime = 0;
+let moved = false;
 
 const startDrag =function(e){
   list.classList.add('active');
   startX = e.pageX;
-  startScroll = list.scrollLeft;//起始點 跟第一種不一樣的是拿原點計算 不一直更新原點位置
-  startTime = new Date().getTime();//手指滑動的時間
+  startScroll = list.scrollLeft;
+  startTime = new Date().getTime();
+  moved = false;
 }
 const dragHandler =function(e){
+  e.preventDefault();
+  moved = true;
   if(list.classList.contains('active')){
   let move = e.pageX - startX;
   list.scrollLeft = startScroll - move * 3;
 }}
 const stopDrag =function(){
   list.classList.remove('active');
-  if(new Date().getTime() - startTime <= 500){//手指滑動的時間 < .5s
+  if(new Date().getTime() - startTime <= 500){
   if(e.pageX > startX){
     console.log('swiper right');
   }
@@ -90,10 +129,20 @@ const stopDrag =function(){
   }}
 }
 
-list.addEventListener('mousedown',startDrag);//手機的話就要改用touchstart
-list.addEventListener('mousemove',dragHandler);//touchmove
-list.addEventListener('mouseup',stopDrag);//touchend
+list.addEventListener('mousedown',startDrag);
+list.addEventListener('mousemove',dragHandler);
+list.addEventListener('mouseup',stopDrag);
 list.addEventListener('mouseleave',stopDrag);
+
+
+
+document.querySelectorAll('.list a').forEach(dom => {
+  dom.addEventListener('check',function(e){
+    if (moved){//當滑動時
+      e.preventDefault();//擋掉A的連結
+    }
+  })
+})
 
 </script>
 
