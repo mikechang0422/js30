@@ -112,9 +112,9 @@ const startDrag =function(e){
   moved = false;
 }
 const dragHandler =function(e){
-  e.preventDefault();
-  moved = true;
+  e.preventDefault();//正常情況點到文字或圖片不應該有動作因此移除移動效果
   if(list.classList.contains('active')){
+    moved = true;
   let move = e.pageX - startX;
   list.scrollLeft = startScroll - move * 3;
 }}
@@ -136,10 +136,10 @@ list.addEventListener('mouseleave',stopDrag);
 
 
 
-document.querySelectorAll('.list a').forEach(dom => {
+document.querySelectorAll('.items a').forEach(dom => {
   dom.addEventListener('check',function(e){
-    if (moved){//當滑動時
-      e.preventDefault();//擋掉A的連結
+    if (moved){//假設滑動
+      e.preventDefault();//關掉check
     }
   })
 })
