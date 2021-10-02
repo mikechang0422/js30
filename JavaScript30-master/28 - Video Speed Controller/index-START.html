@@ -15,6 +15,35 @@
   </div>
 
 <script>
+
+const target = document.querySelector('.speed');
+const bar = document.querySelector('.speed-bar');
+const video = document.querySelector('video');
+
+//控制器
+function moveHandler(e){
+  const min = 0.5;
+  const max = 10;
+  const y = e.pageY - this.offsetTop;
+  let percent = y / this.offsetHeight;
+  //console.log(percent);//0~1
+  const height = Math.round(percent * 100) + '%';//將數值轉成高度
+  bar.style.height = height;
+  //0~1 => 0.5~5 控制影片的速度範圍
+  percent = percent * (max - min) + min;// (0~1)*(max-min) +min
+  percent = percent > max ? max : percent < min ? min : percent;//percent > max 則 max else if percent < min 則 min else percent 三元的附值
+
+  bar.textContent = Math.round(percent * 100) / 100 + 'x';
+  //console.log(percent);
+
+
+
+  //Video的部分
+  video.playbackRate = percent;
+}
+
+target.addEventListener('mousemove',moveHandler);
+
 </script>
 </body>
 </html>
