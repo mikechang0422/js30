@@ -52,4 +52,34 @@
             this.reset()//讀取完清除
         }
     })
+
+
+
+
+
+    //額外補充
+    const switchMap = {
+        1: A,
+        2: B,
+        3: C
+    }
+    function text(aa){
+        if(switchMap[aa]) switchMap[aa]()
+        else D()
+
+        //上方寫法+宣告等於下面的switch但從判斷是變查找 更容易理解
+        // switch(aa){
+        //     case 1;
+        //     A()
+        //     break
+        //     case 2
+        //     B()
+        //     break
+        //     case 3
+        //     C()
+        //     break
+        //     default
+        //     D()
+        // }
+    }
 })()
