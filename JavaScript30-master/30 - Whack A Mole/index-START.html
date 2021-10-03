@@ -78,15 +78,9 @@
     scoreBoard.textContent = score;
   }
   
-  //亂數決定洞口
-  const getRandomMole = function(){
-    let maxTime = 1500;//設定在這才方便以後修改
-    let minTime = 1000;
-
-    const mole = Math.floor(Math.random() * moles.length)//Math.random 隨機數值*總數 = 亂數選取 那因為出來會有小數點因此用floor4捨5入
-    const time = Math.random() * (maxTime - minTime) + minTime;//min sec ~ max-min sec
-    if (molesProxy[mole]) return getRandomMole();//假如已經打開了~則返回自己重取一次 遞迴函式
-    molesProxy[mole] = true;//反之則打開
+  //Reset mole 把重設從亂數跳出拔出來 自成一個function 然後把判斷是否重設丟給亂數一開始
+  const setMole = function(){
+    molesProxy[mole] = true;//打開
 
     //設一個計時器時間到讓他縮回去
     setTimeout (() => {
@@ -97,6 +91,17 @@
       molesProxy[mole] = false;//變false 則縮回去
     },time);
 
+  }
+
+  //亂數決定洞口
+  const getRandomMole = function(){
+    let maxTime = 1500;//設定在這才方便以後修改
+    let minTime = 1000;
+
+    const mole = Math.floor(Math.random() * moles.length)//Math.random 隨機數值*總數 = 亂數選取 那因為出來會有小數點因此用floor4捨5入
+    const time = Math.random() * (maxTime - minTime) + minTime;//min sec ~ max-min sec
+    if (molesProxy[mole]) return getRandomMole();//假如已經打開了~則返回自己重取一次 遞迴函式
+    setMole(mole, time);
   };
 
   //開始遊戲
