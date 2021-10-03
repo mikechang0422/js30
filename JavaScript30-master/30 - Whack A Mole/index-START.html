@@ -80,8 +80,8 @@
   
   //亂數決定洞口
   const getRandomMole = function(){
-    let maxTime = 1000;//設定在這才方便以後修改
-    let minTime = 500;
+    let maxTime = 1500;//設定在這才方便以後修改
+    let minTime = 1000;
 
     const mole = Math.floor(Math.random() * moles.length)//Math.random 隨機數值*總數 = 亂數選取 那因為出來會有小數點因此用floor4捨5入
     const time = Math.random() * (maxTime - minTime) + minTime;//min sec ~ max-min sec
@@ -91,8 +91,12 @@
     //設一個計時器時間到讓他縮回去
     setTimeout (() => {
       if (!timeUp) getRandomMole();//如果時間還沒到則呼叫getRandomMole讓下一隻起來
+    },time / 2);//讓第一支出來的時間到一半第二隻就會出來
+
+    setTimeout (() => {
       molesProxy[mole] = false;//變false 則縮回去
-    },time)
+    },time);
+
   };
 
   //開始遊戲
