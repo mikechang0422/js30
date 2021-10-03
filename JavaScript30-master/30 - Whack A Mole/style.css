@@ -67,3 +67,7 @@ h1 {
 .hole.up .mole {
   top: 0;
 }
+/*額外增加*/
+.mole.up{
+  top:0;
+}

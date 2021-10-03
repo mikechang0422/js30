@@ -33,10 +33,77 @@
   </div>
 
 <script>
-  const holes = document.querySelectorAll('.hole');
+  //const holes = document.querySelectorAll('.hole'); 改寫了~用不到
   const scoreBoard = document.querySelector('.score');
-  const moles = document.querySelectorAll('.mole');
+  const moles = [...document.querySelectorAll('.mole')];
+  const status = moles.reduce((prev, current, index) => {
+    prev[index] = false;
+    return prev;
+  },{})
 
+
+  //點擊讓老鼠起來再下去
+  const clickHandler = function(){//這裡的this = moles[數字] = 第幾隻
+    if (molesProxy[moles.indexOf(this)]){//判斷molesProxy[數字]是否 = true
+      setScore(score + 1);//是才+1 判斷以避免改class叫起來的也有功能
+      molesProxy[moles.indexOf(this)] = false;//讓他縮回去
+    }
+  };
+
+
+  //指定老鼠 用 Proxy 來代理 moles
+  const molesProxy = new Proxy(status,{
+    get(target, key){
+      return target[key];
+    },
+    set(target, key, value){
+      target[key] = value;
+      moles[key].removeEventListener('click', clickHandler);
+      if (value){
+        moles[key].addEventListener('click', clickHandler);
+        moles[key].classList.add('up');
+      } else {
+        moles[key].classList.remove('up');
+      }
+    }
+  })
+
+  let score = 0;
+  let timeUp = true;//設時間倒數器 打開
+
+
+  //分數功能
+  const setScore = function(s){ //分數呈現
+    score = s;
+    scoreBoard.textContent = score;
+  }
+  
+  //亂數決定洞口
+  const getRandomMole = function(){
+    let maxTime = 1000;//設定在這才方便以後修改
+    let minTime = 500;
+
+    const mole = Math.floor(Math.random() * moles.length)//Math.random 隨機數值*總數 = 亂數選取 那因為出來會有小數點因此用floor4捨5入
+    const time = Math.random() * (maxTime - minTime) + minTime;//min sec ~ max-min sec
+    if (molesProxy[mole]) return getRandomMole();//假如已經打開了~則返回自己重取一次 遞迴函式
+    molesProxy[mole] = true;//反之則打開
+
+    //設一個計時器時間到讓他縮回去
+    setTimeout (() => {
+      if (!timeUp) getRandomMole();//如果時間還沒到則呼叫getRandomMole讓下一隻起來
+      molesProxy[mole] = false;//變false 則縮回去
+    },time)
+  };
+
+  //開始遊戲
+  const startGame = function(){
+    setScore(0);//分數從0開始
+    timeUp = false;//設時間倒數器 關閉
+    getRandomMole();//亂數顯示
+    setTimeout(() => {//倒數計時器時
+      (timeUp = true), alert('Time`s Up')//當時間到時顯示time`s up
+    },10000);
+  }
 </script>
 </body>
 </html>
